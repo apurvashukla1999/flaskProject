@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Flask Tutorial</title>
-  </head>
-  <body>
-    {% extends "template.html" %}
-    {% block content %}
+{% extends 'template.html' %}
 
-    <h1> My First Try Using Flask </h1>
-    <p> Flask is Fun </p>
+{% block title %}Home{% endblock %}
 
-    {% endblock %}
-  </body>
-</html>
+{% block content %}
+<h2>Home Page</h2>
+<p>Welcome back, {{ username }}!</p>
+
+
+
+{% endblock %}
