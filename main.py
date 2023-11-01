@@ -1,6 +1,6 @@
 import re
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, DateField
+from wtforms import StringField, PasswordField, BooleanField, DateField, IntegerRangeField, IntegerField
 from wtforms import DecimalField, RadioField, DateTimeField
 import MySQLdb.cursors
 import hashlib
@@ -21,12 +21,11 @@ app.config['MYSQL_DB'] = 'pythonlogin'
 mysql = MySQL(app)
 
 
-class MyForm(FlaskForm):
-    name = StringField('Name', validators=[InputRequired()])
-    remember_me = BooleanField('Remember me')
-    salary = DecimalField('Salary', validators=[InputRequired()])
-    gender = RadioField('Gender', choices=[('male', 'Male'), ('female', 'Female')])
+class TimesheetForm(FlaskForm):
     date = DateField("Start time", validators=[InputRequired()], format="%d%b%Y %H:%M")
+    hour = IntegerField(validators=[InputRequired()])
+    temp1 = StringField()
+    temp2 = StringField()
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -106,24 +105,23 @@ def home():
     return redirect(url_for('profile'))
 
 
-@app.route("/test", methods=['GET', 'POST'])
-def test():
-    form = MyForm()
+@app.route("/sheet", methods=['GET', 'POST'])
+def sheet():
+    form = TimesheetForm()
     if form.validate_on_submit():
-        name = form.name.data
-        remember_me = form.remember_me.data
-        salary = form.salary.data
-        gender = form.gender.data
         date = form.date.data
-        return f'name: {name} <br> remember_me: {remember_me} < br > Salary: {salary} <br> Gender: {gender} Date: {date}'
-    return render_template("test.html", form=form)
+        hour = form.hour.data
+        temp1 = form.temp1.data
+        temp2 = form.temp2.data
+        return f'Date: {date} <br> hour: {hour} <br> temp1: {temp1} <br> temp2: {temp2}'
+    return render_template("sheet.html", form=form)
 
 
 @app.route("/profile")
 def profile():
     # Check if the user is logged in
     if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
+        # We need all the account info for the user,so we can display it on the profile page
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM accounts WHERE id = %s', (session['id'],))
         account = cursor.fetchone()
