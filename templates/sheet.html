@@ -5,10 +5,11 @@
 <h1>Timesheet Form</h1>
     <form method="post" action="/sheet" enctype="multipart/form-data" >
         <p>{{ form.date.label }} {{ form.date() }}</p>
-        <p>{{ form.hour.label }} {{ form.hour(min='1', max='24') }}</p>
-        <p>{{ form.temp1.label }} {{ form.temp1() }}</p>
-        <p>{{ form.temp2.label }} {{ form.temp2() }}</p>
-        <p><input type="submit" value="Submit"></p>
+        <p>{{ form.startHour.label }} {{ form.startHour() }}</p>
+        <p>{{ form.endHour.label }} {{ form.endHour() }}</p>
+        <p>{{ form.role.label }} {{ form.role() }}</p>
+        <p>{{ form.client.label }} {{ form.client() }}</p>
+        <p>{{ form.submit()}}</p>
     </form>
 {% endblock %}
 

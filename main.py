@@ -1,12 +1,13 @@
+import datetime
 import re
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, DateField, IntegerRangeField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, DateField, IntegerRangeField, IntegerField, SelectField, \
+    SubmitField, TimeField
 from wtforms import DecimalField, RadioField, DateTimeField
 import MySQLdb.cursors
 import hashlib
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_mysqldb import MySQL
-from wtforms.fields import datetime
 from wtforms.validators import InputRequired
 
 app = Flask(__name__)
@@ -23,9 +24,11 @@ mysql = MySQL(app)
 
 class TimesheetForm(FlaskForm):
     date = DateField("Start time", validators=[InputRequired()], format="%d%b%Y %H:%M")
-    hour = IntegerField(validators=[InputRequired()])
-    temp1 = StringField()
-    temp2 = StringField()
+    startHour = TimeField('Start Time', format='%H:%M', validators=[InputRequired()])
+    endHour = TimeField('End Time', format='%H:%M', validators=[InputRequired()])
+    role = SelectField('Role', validators=[InputRequired()], choices=[('employee', 'Employee'), ('manager', 'Manager'), ('admin', 'Admin')])
+    client = SelectField('ClientID')
+    submit = SubmitField()
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -108,12 +111,18 @@ def home():
 @app.route("/sheet", methods=['GET', 'POST'])
 def sheet():
     form = TimesheetForm()
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT client_name FROM client")
+    fetch = cursor.fetchall()
+    form.client.choices = [(temp2) for temp2 in fetch]
     if form.validate_on_submit():
         date = form.date.data
-        hour = form.hour.data
-        temp1 = form.temp1.data
-        temp2 = form.temp2.data
-        return f'Date: {date} <br> hour: {hour} <br> temp1: {temp1} <br> temp2: {temp2}'
+        startHour = form.startHour.data
+        endHour = form.endHour.data
+        role = form.role.data
+        client = form.client.data
+        submit = form.submit.data
+        return '<h1> Hi {}!. Your form is submitted successfully.</h1>'
     return render_template("sheet.html", form=form)
 
 
