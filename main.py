@@ -22,11 +22,16 @@ app.config['MYSQL_DB'] = 'pythonlogin'
 mysql = MySQL(app)
 
 
+# function call
+
+
+
 class TimesheetForm(FlaskForm):
     date = DateField("Start time", validators=[InputRequired()], format="%d%b%Y %H:%M")
     startHour = TimeField('Start Time', format='%H:%M', validators=[InputRequired()])
     endHour = TimeField('End Time', format='%H:%M', validators=[InputRequired()])
-    role = SelectField('Role', validators=[InputRequired()], choices=[('employee', 'Employee'), ('manager', 'Manager'), ('admin', 'Admin')])
+    role = SelectField('Role', validators=[InputRequired()],
+                       choices=[('employee', 'Employee'), ('manager', 'Manager'), ('admin', 'Admin')])
     client = SelectField('ClientID')
     submit = SubmitField()
 
@@ -122,7 +127,7 @@ def sheet():
         role = form.role.data
         client = form.client.data
         submit = form.submit.data
-        return '<h1> Hi {}!. Your form is submitted successfully.</h1>'
+        return '<h1> Your form is submitted successfully.</h1>'
     return render_template("sheet.html", form=form)
 
 
@@ -138,6 +143,7 @@ def profile():
         return render_template('profile.html', account=account)
     # User is not logged in redirect to login page
     return redirect(url_for('login'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
